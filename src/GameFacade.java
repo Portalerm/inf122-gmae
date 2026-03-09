@@ -86,4 +86,9 @@ public class GameFacade {
 	public User getUser() {
 		return user;
 	}
+
+	public MiniAdventure launchMiniAdventure(MiniAdventure adventure, Character p1, Character p2, Realm realm) {
+		adventure.initialize(p1, p2, realm);
+		return adventure;
+	}
 }
