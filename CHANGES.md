@@ -1,3 +1,22 @@
+# Changes — Escort Across the Realm Mini-Adventure
+
+## New Files (3)
+### `Npc.java`
+Class defining the npc with a name, hp, and alive status 
+
+### `EscortPlayer.java`
+Reused RaidPlayer.java with the exclusion of objectives and inclusion of NPC related attributes like whether one is following a certain player
+
+### `EscortAdventure.java`
+Reused TimedRaidAdventure.java, excluding any mention of objectives or deadlines. Modifications towards the entity layout. Inclusions for NPC interactions with entities and traps, changing victory and defeat requirements. 
+
+## Modified Files (1)
+### `Main.java`
+Added second mini-adventure option to interactive menu
+- "Launch Escort Across the Realm" in between "Launch Timed Raid" and "Quit" options
+- Reuses character creation but modified for additional NPC options
+- Reuses demo Realm with a +2 hour time offset rule
+
 # Changes — Timed Raid Window Mini-Adventure
 
 ## New Files (7)
