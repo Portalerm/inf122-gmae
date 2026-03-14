@@ -5,16 +5,16 @@ import java.util.Scanner;
 public class TimedRaidAdventure implements MiniAdventure {
     private RaidPlayer player1;
     private RaidPlayer player2;
-    private RaidMap map;
+    private Map map;
     private List<RaidEntity> entities;
     private Realm realm;
-    private int totalObjectives;
-    private int objectivesCollected;
     private boolean complete;
     private boolean victory;
     private WorldClock worldClock;
-    private LocalTime raidDeadline;
     private StringBuilder log;
+    private int totalObjectives;
+    private int objectivesCollected;
+    private LocalTime raidDeadline;
 
     public TimedRaidAdventure() {
         this.entities = new ArrayList<>();
@@ -39,7 +39,7 @@ public class TimedRaidAdventure implements MiniAdventure {
             raidDeadline.setHours(raidDeadline.getHours() % 24);
         }
 
-        map = RaidMap.createDefaultRaid();
+        map = Map.createDefaultMap();
 
         player1 = new RaidPlayer(p1, 1, 1, 1);
         player2 = new RaidPlayer(p2, 2, 1, 2);

@@ -1,21 +1,20 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Random;
+import java.util.Scanner;
 
 public class EscortAdventure implements MiniAdventure{
     private EscortPlayer player1;
     private EscortPlayer player2;
-    private Npc npc = new Npc("Barton");
-    private RaidMap map;
+    private Map map;
     private List<RaidEntity> entities;
     private Realm realm;
-    private int totalObjectives;
     private boolean complete;
     private boolean victory;
     private WorldClock worldClock;
     private StringBuilder log;
-
+    private Npc npc = new Npc("Barton");
+    
     public EscortAdventure() {
         this.entities = new ArrayList<>();
         this.complete = false;
@@ -30,7 +29,7 @@ public class EscortAdventure implements MiniAdventure{
 
         worldClock.setTime(new Time(1, 18, 0));
 
-        map = RaidMap.createDefaultRaid();
+        map = Map.createDefaultMap();
 
         player1 = new EscortPlayer(p1, 1, 1, 1);
         player2 = new EscortPlayer(p2, 2, 1, 2);
