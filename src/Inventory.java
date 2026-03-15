@@ -46,4 +46,17 @@ public class Inventory {
 			item.setInfo(itemInfo);
 		}
 	}
+
+	@Override
+	public String toString() {
+		if (items.isEmpty()) {
+			return "Inventory: (empty)";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("Inventory:\n");
+		for (Item item : items) {
+			sb.append("  - ").append(item.getInfo().getName()).append("\n");
+		}
+		return sb.toString();
+	}
 }
