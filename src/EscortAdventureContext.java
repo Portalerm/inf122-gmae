@@ -13,18 +13,21 @@ public class EscortAdventureContext extends MiniAdventureContext {
     }
 
     @Override
-    public void initializeLocal() {
-        this.p1 = (EscortPlayer) getPlayer1();
-        this.p2 = (EscortPlayer) getPlayer2();
-    
+    public void initializeLocal(Character c1, Character c2) {
+        this.p1 = new EscortPlayer(c1, 1, P1_START_ROW, P1_START_COL);
+        this.p2 = new EscortPlayer(c2, 2, P2_START_ROW, P2_START_COL);
+
+        setPlayer1(this.p1);
+        setPlayer2(this.p2);
+
         Random random = new Random();
         int selectedCharacter = random.nextInt(2) + 1;
         if (selectedCharacter == 1) {
-            p1.setEscort(true);
-            p1.addNPC(npc);
+            this.p1.setEscort(true);
+            this.p1.addNPC(npc);
         } else {
-            p2.setEscort(true);
-            p2.addNPC(npc);
+            this.p2.setEscort(true);
+            this.p2.addNPC(npc);
         }
     }
 
@@ -105,14 +108,14 @@ public class EscortAdventureContext extends MiniAdventureContext {
         switch (mob.getSymbol()) {
             case 'M':
                 System.out.println(pName + " engages " + mob.getName() + "!");
-                while (mob.isAlive() && player.isAlive() && npc.isAlive()) {
-                    mob.takeDamage(player.getAttackPower());
-                    System.out.println("  " + pName + " attacks for " + player.getAttackPower()
+                while (mob.isAlive() && escortPlayer.isAlive() && npc.isAlive()) {
+                    mob.takeDamage(escortPlayer.getAttackPower());
+                    System.out.println("  " + pName + " attacks for " + escortPlayer.getAttackPower()
                             + " damage! (" + mob.getName() + " HP: " + mob.getHp() + ")");
                     if (mob.isAlive()) {
-                        player.takeDamage(mob.getAttackPower());
+                        escortPlayer.takeDamage(mob.getAttackPower());
                         System.out.println("  " + mob.getName() + " strikes back for "
-                                + mob.getAttackPower() + " damage! (" + pName + " HP: " + player.getHp() + ")");
+                                + mob.getAttackPower() + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
                         if (npcPresent) {
                             npc.takeDamage(mob.getAttackPower());
                         }
@@ -124,7 +127,7 @@ public class EscortAdventureContext extends MiniAdventureContext {
                     System.out.println("  " + mob.getName() + " defeated!");
                     Item drop = RaidLootTable.generateMonsterDrop();
                     if (drop != null) {
-                        player.getCharacter().getInventory().addItem(drop);
+                        escortPlayer.getCharacter().getInventory().addItem(drop);
                         System.out.println("  Loot: " + drop.getInfo().getName()
                                 + " (" + drop.getInfo().getRarity() + ")");
                     }
@@ -132,8 +135,8 @@ public class EscortAdventureContext extends MiniAdventureContext {
                 if (npcPresent && !npc.isAlive()) {
                     System.out.println("  " + npc.getName() + " has been slain!");
                 }
-                if (!player.isAlive()) {
-                    System.out.println("  " + player.getCharacter().getName() + " has been slain!");
+                if (!escortPlayer.isAlive()) {
+                    System.out.println("  " + escortPlayer.getCharacter().getName() + " has been slain!");
                     if (npcPresent && (p1.isAlive() || p2.isAlive())) {
                         int slayedCharacter = escortPlayer.getPlayerNumber();
                         if (slayedCharacter == 1) {
@@ -156,7 +159,7 @@ public class EscortAdventureContext extends MiniAdventureContext {
             case 'T':
                 System.out.println(pName + " triggered a " + mob.getName() + "! (-"
                         + mob.getAttackPower() + " HP)");
-                player.takeDamage(mob.getAttackPower());
+                escortPlayer.takeDamage(mob.getAttackPower());
                 if (npcPresent) {
                     System.out.println(npc.getName() + " is hit by " + mob.getName() + " as well! (-"
                             + mob.getAttackPower() + " HP)");
@@ -166,8 +169,8 @@ public class EscortAdventureContext extends MiniAdventureContext {
                 if (npcPresent && !npc.isAlive()) {
                     System.out.println("  " + npc.getName() + " has been slain!");
                 }
-                if (!player.isAlive()) {
-                    System.out.println("  " + player.getCharacter().getName() + " has been slain!");
+                if (!escortPlayer.isAlive()) {
+                    System.out.println("  " + escortPlayer.getCharacter().getName() + " has been slain!");
                     if (npcPresent && (p1.isAlive() || p2.isAlive())) {
                         int slayedCharacter = escortPlayer.getPlayerNumber();
                         if (slayedCharacter == 1) {
@@ -197,6 +200,11 @@ public class EscortAdventureContext extends MiniAdventureContext {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String getResultSummary() {
+        return super.getResultSummary() + npc.getStatusLine() + "\n";
     }
 
     @Override

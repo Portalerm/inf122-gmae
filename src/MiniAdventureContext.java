@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public abstract class MiniAdventureContext {
+    static final int P1_START_ROW = 1;
+    static final int P1_START_COL = 1;
+    static final int P2_START_ROW = 1;
+    static final int P2_START_COL = 2;
 
     private Player player1;
     private Player player2;
@@ -21,7 +25,7 @@ public abstract class MiniAdventureContext {
         this.log = new StringBuilder();
     }
 
-    abstract void initializeLocal();
+    abstract void initializeLocal(Character c1, Character c2);
 
     abstract void placeMobs();
 
@@ -209,8 +213,6 @@ public abstract class MiniAdventureContext {
         sb.append("Result: ").append(victory ? "VICTORY" : "DEFEAT").append("\n");
         sb.append(player1.getStatusLine()).append("\n");
         sb.append(player2.getStatusLine()).append("\n");
-        // sb.append(context.getNpc().getStatusLine()).append("\n");
         return sb.toString();
     }
-;
 }

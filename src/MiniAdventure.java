@@ -8,12 +8,9 @@ public class MiniAdventure {
         this.context = context;
     }
     
-    public void initialize(Character p1, Character p2, Realm realm) {
+    public void initialize(Character c1, Character c2, Realm realm) {
         context.setRealm(realm);
         context.setMap(Map.createDefaultMap());
-
-        context.setPlayer1(new EscortPlayer(p1, 1, 1, 1));
-        context.setPlayer2(new EscortPlayer(p2, 2, 1, 2));
 
         context.placeMobs();
 
@@ -21,7 +18,7 @@ public class MiniAdventure {
             context.getMap().setTile(mob.getRow(), mob.getCol(), mob.getSymbol());
         }
 
-        context.initializeLocal();
+        context.initializeLocal(c1, c2);
     }
 
     public void run(Scanner scanner) {
@@ -31,10 +28,7 @@ public class MiniAdventure {
         while (!context.isComplete()) {
             turnCount++;
             context.displayTurnStatus(turnCount);
-
-            if (context.checkCompletion(scanner)) {
-                break;
-            }
+            if (context.checkCompletion(scanner)) break;
         }
 
         if (context.isVictory()) {
