@@ -2,7 +2,7 @@
 public class EscortPlayer extends Player {
 
     private boolean escortingNPC;
-    private Npc escortedNPC;
+    private NPC escortedNPC;
 
     public EscortPlayer(Character character, int playerNumber, int startRow, int startCol) {
         super(character, playerNumber, startRow, startCol);
@@ -17,7 +17,7 @@ public class EscortPlayer extends Player {
         return escortingNPC;
     }
 
-    public void addNPC(Npc npc) {
+    public void addNPC(NPC npc) {
         escortedNPC = npc;
     }
 

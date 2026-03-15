@@ -15,6 +15,10 @@ public class Inventory {
 		this(new ArrayList<>());
 	}
 
+	public boolean isEmpty() {
+		return items.isEmpty();
+	}
+
 	public List<Item> getItems() {
 		return new ArrayList<>(items);
 	}

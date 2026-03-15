@@ -4,12 +4,14 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class EscortAdventureContext extends MiniAdventureContext {
+
     private EscortPlayer p1;
     private EscortPlayer p2;
-    private Npc npc = new Npc("Barton");
+    private NPC npc;
 
     public EscortAdventureContext() {
         super();
+        this.npc = new NPC("Barton");
     }
 
     @Override
@@ -32,17 +34,21 @@ public class EscortAdventureContext extends MiniAdventureContext {
     }
 
     @Override
-    public void placeMobs() {
-        getMobs().add(RaidEntityFactory.createSkeleton(3, 5));
-        getMobs().add(RaidEntityFactory.createSkeleton(5, 3));
-        getMobs().add(RaidEntityFactory.createOgre(7, 5));
-        getMobs().add(RaidEntityFactory.createOgre(3, 9));
-        getMobs().add(RaidEntityFactory.createDragonling(9, 5));
-        getMobs().add(RaidEntityFactory.createDragonling(10, 1));
+    public void placeEnemies() {
+        getEnemies().add(EscortEnemyFactory.createSkeleton(3, 5));
+        getEnemies().add(EscortEnemyFactory.createSkeleton(5, 3));
+        getEnemies().add(EscortEnemyFactory.createOgre(7, 5));
+        getEnemies().add(EscortEnemyFactory.createOgre(3, 9));
+        getEnemies().add(EscortEnemyFactory.createDragonling(9, 5));
+        getEnemies().add(EscortEnemyFactory.createDragonling(10, 1));
 
-        getMobs().add(RaidEntityFactory.createSpikeTrap(1, 6));
-        getMobs().add(RaidEntityFactory.createPoisonTrap(5, 6));
-        getMobs().add(RaidEntityFactory.createSpikeTrap(9, 8));
+        getEnemies().add(EscortEnemyFactory.createSpikeTrap(1, 6));
+        getEnemies().add(EscortEnemyFactory.createPoisonTrap(5, 6));
+        getEnemies().add(EscortEnemyFactory.createSpikeTrap(9, 8));
+
+        getEnemies().add(EscortEnemyFactory.createLoot(2, 1));
+        getEnemies().add(EscortEnemyFactory.createLoot(3, 1));
+        getEnemies().add(EscortEnemyFactory.createLoot(4, 1));
     }
 
     @Override
@@ -67,20 +73,19 @@ public class EscortAdventureContext extends MiniAdventureContext {
 
         System.out.println(getMap().render(p1.getRow(), p1.getCol(),
                 p2.getRow(), p2.getCol()));
-        System.out.println(npc.getStatusLine());
     }
 
     @Override
     public void displayVictoryMessage() {
         System.out.println("\n*** VICTORY! ***");
         System.out.println("The escort is complete! Distributing loot...\n");
-        List<Item> victoryLoot = RaidLootTable.generateVictoryLoot();
+        List<Item> victoryLoot = LootTable.generateVictoryLoot();
         for (Item item : victoryLoot) {
             p1.getCharacter().getInventory().addItem(item);
             System.out.println("  " + p1.getCharacter().getName() + " received: "
                     + item.getInfo().getName() + " (" + item.getInfo().getRarity() + ")");
         }
-        victoryLoot = RaidLootTable.generateVictoryLoot();
+        victoryLoot = LootTable.generateVictoryLoot();
         for (Item item : victoryLoot) {
             p2.getCharacter().getInventory().addItem(item);
             System.out.println("  " + p2.getCharacter().getName() + " received: "
@@ -101,31 +106,39 @@ public class EscortAdventureContext extends MiniAdventureContext {
     }
 
     @Override
-    public void handleMobInteraction(Player player, Mob mob) {
+    public void handleEnemyInteraction(Player player, Enemy enemy) {
         EscortPlayer escortPlayer = (EscortPlayer) player;
         String pName = "P" + escortPlayer.getPlayerNumber();
         boolean npcPresent = escortPlayer.isEscortingNPC();
-        switch (mob.getSymbol()) {
+        switch (enemy.getSymbol()) {
             case 'M':
-                System.out.println(pName + " engages " + mob.getName() + "!");
-                while (mob.isAlive() && escortPlayer.isAlive() && npc.isAlive()) {
-                    mob.takeDamage(escortPlayer.getAttackPower());
+                System.out.println(pName + " engages " + enemy.getName() + "!");
+                while (enemy.isAlive() && escortPlayer.isAlive() && npc.isAlive()) {
+                    /* TODO: David Phan */
+                    Inventory playerInventory = escortPlayer.getCharacter().getInventory();
+                    if (!playerInventory.isEmpty()) {
+                        System.out.println(pName + " has some items in their " + playerInventory);
+                        System.out.println("Which item would you like to use?");
+                        /* TODO: I haven't implemented item selection and item power yet */
+                    }
+
+                    enemy.takeDamage(escortPlayer.getAttackPower());
                     System.out.println("  " + pName + " attacks for " + escortPlayer.getAttackPower()
-                            + " damage! (" + mob.getName() + " HP: " + mob.getHp() + ")");
-                    if (mob.isAlive()) {
-                        escortPlayer.takeDamage(mob.getAttackPower());
-                        System.out.println("  " + mob.getName() + " strikes back for "
-                                + mob.getAttackPower() + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
+                            + " damage! (" + enemy.getName() + " HP: " + enemy.getHp() + ")");
+                    if (enemy.isAlive()) {
+                        escortPlayer.takeDamage(enemy.getAttackPower());
+                        System.out.println("  " + enemy.getName() + " strikes back for "
+                                + enemy.getAttackPower() + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
                         if (npcPresent) {
-                            npc.takeDamage(mob.getAttackPower());
+                            npc.takeDamage(enemy.getAttackPower());
                         }
-                        System.out.println("  " + mob.getName() + " also strikes the NPC for "
-                                + mob.getAttackPower() + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
+                        System.out.println("  " + enemy.getName() + " also strikes the NPC for "
+                                + enemy.getAttackPower() + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
                     }
                 }
-                if (!mob.isAlive()) {
-                    System.out.println("  " + mob.getName() + " defeated!");
-                    Item drop = RaidLootTable.generateMonsterDrop();
+                if (!enemy.isAlive()) {
+                    System.out.println("  " + enemy.getName() + " defeated!");
+                    Item drop = LootTable.generateMonsterDrop();
                     if (drop != null) {
                         escortPlayer.getCharacter().getInventory().addItem(drop);
                         System.out.println("  Loot: " + drop.getInfo().getName()
@@ -157,15 +170,15 @@ public class EscortAdventureContext extends MiniAdventureContext {
                 break;
 
             case 'T':
-                System.out.println(pName + " triggered a " + mob.getName() + "! (-"
-                        + mob.getAttackPower() + " HP)");
-                escortPlayer.takeDamage(mob.getAttackPower());
+                System.out.println(pName + " triggered a " + enemy.getName() + "! (-"
+                        + enemy.getAttackPower() + " HP)");
+                escortPlayer.takeDamage(enemy.getAttackPower());
                 if (npcPresent) {
-                    System.out.println(npc.getName() + " is hit by " + mob.getName() + " as well! (-"
-                            + mob.getAttackPower() + " HP)");
-                    npc.takeDamage(mob.getAttackPower());
+                    System.out.println(npc.getName() + " is hit by " + enemy.getName() + " as well! (-"
+                            + enemy.getAttackPower() + " HP)");
+                    npc.takeDamage(enemy.getAttackPower());
                 }
-                mob.kill();
+                enemy.kill();
                 if (npcPresent && !npc.isAlive()) {
                     System.out.println("  " + npc.getName() + " has been slain!");
                 }
@@ -188,6 +201,15 @@ public class EscortAdventureContext extends MiniAdventureContext {
                         }
                     }
                 }
+                break;
+
+            case 'L':
+                System.out.println(pName + " collected: " + enemy.getName() + "!");
+                enemy.kill();
+                Item reward = LootTable.generateReward();
+                escortPlayer.getCharacter().getInventory().addItem(reward);
+                System.out.println("  Reward: " + reward.getInfo().getName()
+                        + " (" + reward.getInfo().getRarity() + ")");
                 break;
         }
     }

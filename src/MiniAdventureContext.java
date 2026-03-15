@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public abstract class MiniAdventureContext {
+
     static final int P1_START_ROW = 1;
     static final int P1_START_COL = 1;
     static final int P2_START_ROW = 1;
@@ -12,14 +13,14 @@ public abstract class MiniAdventureContext {
     private Player player1;
     private Player player2;
     private Map map;
-    private List<Mob> mobs;
+    private List<Enemy> enemies;
     private Realm realm;
     private boolean complete;
     private boolean victory;
     private StringBuilder log;
 
     public MiniAdventureContext() {
-        this.mobs = new ArrayList<>();
+        this.enemies = new ArrayList<>();
         this.complete = false;
         this.victory = false;
         this.log = new StringBuilder();
@@ -27,7 +28,7 @@ public abstract class MiniAdventureContext {
 
     abstract void initializeLocal(Character c1, Character c2);
 
-    abstract void placeMobs();
+    abstract void placeEnemies();
 
     abstract void displayHeader();
 
@@ -39,7 +40,7 @@ public abstract class MiniAdventureContext {
 
     abstract String getDescription();
 
-    abstract void handleMobInteraction(Player player, Mob mob);
+    abstract void handleEnemyInteraction(Player player, Enemy enemy);
 
     abstract boolean checkVictory(Player player);
 
@@ -55,8 +56,8 @@ public abstract class MiniAdventureContext {
         return map;
     }
 
-    public List<Mob> getMobs() {
-        return mobs;
+    public List<Enemy> getEnemies() {
+        return enemies;
     }
 
     public Realm getRealm() {
@@ -102,7 +103,7 @@ public abstract class MiniAdventureContext {
             if (action.equals("q")) {
                 complete = true;
                 victory = false;
-                System.out.println("Escort abandoned!");
+                System.out.println("Mission abandoned!");
                 return true;
             }
             handleAction(player1, action);
@@ -117,7 +118,7 @@ public abstract class MiniAdventureContext {
             if (action.equals("q")) {
                 complete = true;
                 victory = false;
-                System.out.println("Escort abandoned!");
+                System.out.println("Mission abandoned!");
                 return true;
             }
             handleAction(player2, action);
@@ -129,7 +130,7 @@ public abstract class MiniAdventureContext {
         if (!player1.isAlive() && !player2.isAlive()) {
             complete = true;
             victory = false;
-            System.out.println("\nBoth escorts have fallen! The escort was a failure.");
+            System.out.println("\nBoth characters have fallen! The mission was a failure.");
             return true;
         }
 
@@ -139,13 +140,13 @@ public abstract class MiniAdventureContext {
     ;
 
     void showInventory(Player player) {
-        System.out.println(player.getCharacter().getName() + "'s Inventory:" + player.getCharacter().getInventory());
+        System.out.println(player.getCharacter().getName() + "'s " + player.getCharacter().getInventory());
     }
 
-    Mob findMob(int row, int col) {
-        for (Mob mob : mobs) {
-            if (mob.isAlive() && mob.getRow() == row && mob.getCol() == col) {
-                return mob;
+    Enemy findEnemy(int row, int col) {
+        for (Enemy enemy : enemies) {
+            if (enemy.isAlive() && enemy.getRow() == row && enemy.getCol() == col) {
+                return enemy;
             }
         }
         return null;
@@ -189,13 +190,13 @@ public abstract class MiniAdventureContext {
             return;
         }
 
-        Mob mob = findMob(newRow, newCol);
-        if (mob != null && mob.isAlive()) {
-            handleMobInteraction(player, mob);
+        Enemy enemy = findEnemy(newRow, newCol);
+        if (enemy != null && enemy.isAlive()) {
+            handleEnemyInteraction(player, enemy);
             if (!player.isAlive()) {
                 return;
             }
-            if (!mob.isAlive()) {
+            if (!enemy.isAlive()) {
                 map.setTile(newRow, newCol, '.');
                 player.setRow(newRow);
                 player.setCol(newCol);
