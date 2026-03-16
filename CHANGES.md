@@ -1,3 +1,16 @@
+# Changes — Items
+
+## Modified Items (3)
+
+### `Inventory.java`
+Added a findItemByIndex and removeItemByIndex helper functions to allow for item ID retrieval through index number
+
+### `LootTable.java`
+Added a lootTableLookup helper function to help determine item effects
+
+### `EscortAdventureContext.java`
+Added effects and interactions for items when battling a monster
+
 # Changes — Refactors
 
 ## New Files (14)
