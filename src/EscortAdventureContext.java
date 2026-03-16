@@ -1,4 +1,5 @@
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -110,39 +111,109 @@ public class EscortAdventureContext extends MiniAdventureContext {
         EscortPlayer escortPlayer = (EscortPlayer) player;
         String pName = "P" + escortPlayer.getPlayerNumber();
         boolean npcPresent = escortPlayer.isEscortingNPC();
+        int num = 0;
+        int power = 0;
+        int def = 0;
+        boolean escape = false;
         switch (enemy.getSymbol()) {
             case 'M':
                 System.out.println(pName + " engages " + enemy.getName() + "!");
-                while (enemy.isAlive() && escortPlayer.isAlive() && npc.isAlive()) {
-                    /* TODO: David Phan */
+                while ((enemy.isAlive() && escortPlayer.isAlive() && npc.isAlive())) {
+                    power = 0;
+                    def = 0;
                     Inventory playerInventory = escortPlayer.getCharacter().getInventory();
                     if (!playerInventory.isEmpty()) {
                         System.out.println(pName + " has some items in their " + playerInventory);
-                        System.out.println("Which item would you like to use?");
-                        /* TODO: I haven't implemented item selection and item power yet */
-                    }
-
-                    enemy.takeDamage(escortPlayer.getAttackPower());
-                    System.out.println("  " + pName + " attacks for " + escortPlayer.getAttackPower()
-                            + " damage! (" + enemy.getName() + " HP: " + enemy.getHp() + ")");
-                    if (enemy.isAlive()) {
-                        escortPlayer.takeDamage(enemy.getAttackPower());
-                        System.out.println("  " + enemy.getName() + " strikes back for "
-                                + enemy.getAttackPower() + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
-                        if (npcPresent) {
-                            npc.takeDamage(enemy.getAttackPower());
+                        System.out.println("Which item would you like to use? (0 for none)");
+                        Scanner scanner = new Scanner(System.in);
+                        String choice = scanner.nextLine().trim();
+                        try {
+                            num = Integer.parseInt(choice);
+                        } catch (NumberFormatException ignored) {
                         }
-                        System.out.println("  " + enemy.getName() + " also strikes the NPC for "
-                                + enemy.getAttackPower() + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
+                        if (num == 0) {
+                            System.out.println("No item used.");
+                        }
+                        else if (num <= playerInventory.getItems().size() && num > 0) {
+                            String itemName = playerInventory.findItemByIndex(num-1).getInfo().getName();
+                            int row = LootTable.lootTableLookup(itemName)[0];
+                            int col = LootTable.lootTableLookup(itemName)[1];
+                            System.out.println(itemName + " used!");
+                            playerInventory.removeItemByIndex(num-1);
+                            switch (col) {
+                                case 1:
+                                    System.out.println("Player " + player.getPlayerNumber() + " will deal " +
+                                            "(+" + row + ") more damage for this turn!");
+                                    power = row;
+                                    break;
+                                case 2:
+                                    System.out.println("Player " + player.getPlayerNumber() + " will take " +
+                                            "(-" + row + ") less damage for this turn!");
+                                    if (npcPresent) {
+                                        System.out.println("NPC " + npc.getName() + " will also take " +
+                                                "(-" + row + ") less damage for this turn!");
+                                    }
+                                    def = row;
+                                    break;
+                                case 3:
+                                    System.out.println("Player " + player.getPlayerNumber() + " will heal for " +
+                                            "(+" + (2+row) + ")!");
+                                    player.setHp(Math.min(player.getHp() + (2 + row), player.getMaxHp()));
+                                    if (npcPresent) {
+                                        System.out.println("NPC " + npc.getName() + " will also heal " +
+                                                "(+" + (2+row) + ")!");
+                                        npc.setHp(Math.min(npc.getHp()+(2+row), npc.getMaxHp()));
+                                    }
+                                    break;
+                                case 4:
+                                    System.out.println("Player " + player.getPlayerNumber() + " has a (" +
+                                            (50+(10*row)) + "%) chance to escape!");
+                                    System.out.println("And the fate decides...");
+                                    Random random = new Random();
+                                    int fate = random.nextInt(100)+1;
+                                    if (50+(10*row) >= fate) {
+                                        System.out.println("Escape success! " + enemy.getName() + " avoided!");
+                                        escape = true;
+                                        enemy.kill();
+                                        break;
+                                    }
+                                    else {
+                                        System.out.println("Escape failed! Battle continues!");
+                                    }
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice.");
+                            }
+                        }
+                        else {
+                            System.out.println("Invalid choice.");
+                        }
+                    }
+                    if (!escape) {
+                        enemy.takeDamage((escortPlayer.getAttackPower() + power));
+                        System.out.println("  " + pName + " attacks for " + (escortPlayer.getAttackPower() + power)
+                                + " damage! (" + enemy.getName() + " HP: " + enemy.getHp() + ")");
+                        if (enemy.isAlive()) {
+                            escortPlayer.takeDamage((enemy.getAttackPower() - def));
+                            System.out.println("  " + enemy.getName() + " strikes back for "
+                                    + (enemy.getAttackPower()-def) + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
+                            if (npcPresent) {
+                                npc.takeDamage((enemy.getAttackPower() - def));
+                                System.out.println("  " + enemy.getName() + " also strikes the NPC for "
+                                        + (enemy.getAttackPower()-def) + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
+                            }
+                        }
                     }
                 }
                 if (!enemy.isAlive()) {
-                    System.out.println("  " + enemy.getName() + " defeated!");
-                    Item drop = LootTable.generateMonsterDrop();
-                    if (drop != null) {
-                        escortPlayer.getCharacter().getInventory().addItem(drop);
-                        System.out.println("  Loot: " + drop.getInfo().getName()
-                                + " (" + drop.getInfo().getRarity() + ")");
+                    if (!escape) {
+                        System.out.println("  " + enemy.getName() + " defeated!");
+                        Item drop = LootTable.generateMonsterDrop();
+                        if (drop != null) {
+                            escortPlayer.getCharacter().getInventory().addItem(drop);
+                            System.out.println("  Loot: " + drop.getInfo().getName()
+                                    + " (" + drop.getInfo().getRarity() + ")");
+                        }
                     }
                 }
                 if (npcPresent && !npc.isAlive()) {

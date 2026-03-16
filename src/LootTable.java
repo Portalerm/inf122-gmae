@@ -38,4 +38,15 @@ public class LootTable {
         String description = "A " + rarity.name().toLowerCase() + " item found during a raid.";
         return new Item(new ItemInfo(name, description, rarity));
     }
+
+    public static int[] lootTableLookup(String itemName) {
+        for (int i = 0; i < ITEM_NAMES.length; i++) {
+            for (int j = 0; j < ITEM_NAMES[i].length; j++) {
+                if (ITEM_NAMES[i][j].equals(itemName)) {
+                    return new int[]{i+1, j+1};
+                }
+            }
+        }
+        return null;
+    }
 }

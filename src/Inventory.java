@@ -37,12 +37,20 @@ public class Inventory {
 		return null;
 	}
 
+    public Item findItemByIndex(int index) {
+        return findItem(items.get(index).getUuid());
+    }
+
 	public void removeItem(int itemId) {
 		Item item = findItem(itemId);
 		if (item != null) {
 			items.remove(item);
 		}
 	}
+
+    public void removeItemByIndex(int index) {
+        removeItem(items.get(index).getUuid());
+    }
 
 	public void updateItem(int itemId, ItemInfo itemInfo) {
 		Item item = findItem(itemId);
@@ -58,8 +66,10 @@ public class Inventory {
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("Inventory:\n");
+        int counter = 1;
 		for (Item item : items) {
-			sb.append("  - ").append(item.getInfo().getName()).append("\n");
+			sb.append("  ").append(counter).append(" ").append(item.getInfo().getName()).append("\n");
+            counter++;
 		}
 		return sb.toString();
 	}
