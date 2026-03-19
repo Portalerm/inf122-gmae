@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -9,23 +10,34 @@ public class Main {
 		System.out.println("        Welcome to GuildQuest!");
 		System.out.println("========================================");
 
+		PlayerProfile profile1 = selectOrCreateProfile(facade, scanner, 1);
+		PlayerProfile profile2 = selectOrCreateProfile(facade, scanner, 2);
+
 		boolean running = true;
 		while (running) {
 			System.out.println("\nMain Menu:");
 			System.out.println("  1) Launch Timed Raid");
-            System.out.println("  2) Launch Escort Across the Realm");
-			System.out.println("  3) Quit");
+			System.out.println("  2) Launch Escort Across the Realm");
+			System.out.println("  3) View My Profile (Player 1)");
+			System.out.println("  4) View My Profile (Player 2)");
+			System.out.println("  5) Quit");
 			System.out.print("Choice: ");
 			String choice = scanner.nextLine().trim();
 
 			switch (choice) {
 				case "1":
-					launchTimedRaid(facade, scanner);
+					launchTimedRaid(facade, scanner, profile1, profile2);
 					break;
-                case "2":
-                    launchEscort(facade, scanner);
-                    break;
+				case "2":
+					launchEscort(facade, scanner, profile1, profile2);
+					break;
 				case "3":
+					profile1.displayProfile();
+					break;
+				case "4":
+					profile2.displayProfile();
+					break;
+				case "5":
 					running = false;
 					System.out.println("Goodbye!");
 					break;
@@ -35,119 +47,128 @@ public class Main {
 		}
 	}
 
-	private static void launchTimedRaid(GameFacade facade, Scanner scanner) {
-		System.out.println("\n--- Character Creation ---");
 
-		System.out.print("Player 1 name: ");
-		String name1 = scanner.nextLine().trim();
+	private static PlayerProfile selectOrCreateProfile(GameFacade facade, Scanner scanner, int playerNumber) {
+		System.out.println("\n--- Player " + playerNumber + " Profile ---");
+
+		List<String> existing = facade.getAllProfileNames();
+		if (!existing.isEmpty()) {
+			System.out.println("Existing profiles: " + String.join(", ", existing));
+		}
+
+		System.out.print("Enter your profile name (new or existing): ");
+		String name = scanner.nextLine().trim();
+
+		PlayerProfile profile = facade.findProfile(name);
+		if (profile != null) {
+			System.out.println("Welcome back, " + profile.getName() + "!");
+			Character active = profile.getActiveCharacter();
+			if (active != null) {
+				System.out.println("Playing as: " + active.getName() + " the " + active.getClassType()
+						+ " (Level " + active.getLevel() + ")");
+			} else {
+				// Create a character if we don't have one already
+				createCharacterForProfile(facade, scanner, profile);
+			}
+		} else {
+			System.out.println("Creating new profile: " + name);
+			profile = facade.createProfile(name);
+			createCharacterForProfile(facade, scanner, profile);
+		}
+
+		return profile;
+	}
+
+	private static void createCharacterForProfile(GameFacade facade, Scanner scanner, PlayerProfile profile) {
 		System.out.println("Classes: (w)arrior, (m)age, (a)rcher, (r)ogue, m(o)nk");
-		System.out.print("Player 1 class: ");
-		char class1 = scanner.nextLine().trim().toLowerCase().charAt(0);
-		facade.createCharacter(name1, class1);
-		Character p1 = facade.getCharacters().get(facade.getCharacters().size() - 1);
-		System.out.println("Created: " + p1.getName() + " the " + p1.getClassType());
+		System.out.print("Choose a class: ");
+		char classChoice = scanner.nextLine().trim().toLowerCase().charAt(0);
+		facade.createCharacterForProfile(profile, profile.getName(), classChoice);
+		Character c = profile.getActiveCharacter();
+		System.out.println("Created: " + c.getName() + " the " + c.getClassType());
+	}
 
-		System.out.print("\nPlayer 2 name: ");
-		String name2 = scanner.nextLine().trim();
-		System.out.println("Classes: (w)arrior, (m)age, (a)rcher, (r)ogue, m(o)nk");
-		System.out.print("Player 2 class: ");
-		char class2 = scanner.nextLine().trim().toLowerCase().charAt(0);
-		facade.createCharacter(name2, class2);
-		Character p2 = facade.getCharacters().get(facade.getCharacters().size() - 1);
-		System.out.println("Created: " + p2.getName() + " the " + p2.getClassType());
-
-		LocalTimeRule realmTimeRule = new LocalTimeRule() {
+	private static Realm buildTimedRaidRealm() {
+		LocalTimeRule rule = new LocalTimeRule() {
 			@Override
 			public LocalTime toLocal(Time worldTime) {
 				int hours = worldTime.getHour() + 2;
 				int days = worldTime.getDay();
-				if (hours >= 24) {
-					days += hours / 24;
-					hours = hours % 24;
-				}
+				if (hours >= 24) { days += hours / 24; hours = hours % 24; }
 				return new LocalTime(days, hours, worldTime.getMinute());
 			}
-
 			@Override
 			public Time toWorld(LocalTime local) {
 				int hours = local.getHours() - 2;
 				int days = local.getDays();
-				if (hours < 0) {
-					hours += 24;
-					days--;
-				}
+				if (hours < 0) { hours += 24; days--; }
 				return new Time(days, hours, local.getMinutes());
 			}
-
 			@Override
-			public String describe() {
-				return "Shadowfell time (UTC+2)";
-			}
+			public String describe() { return "Shadowfell time (UTC+2)"; }
 		};
+		return new Realm("Shadowfell Catacombs",
+				"Ancient underground tunnels haunted by restless spirits.", rule);
+	}
 
-		Realm realm = new Realm("Shadowfell Catacombs",
-			"Ancient underground tunnels haunted by restless spirits.", realmTimeRule);
+	private static Realm buildEscortRealm() {
+		LocalTimeRule rule = new LocalTimeRule() {
+			@Override
+			public LocalTime toLocal(Time worldTime) {
+				int hours = worldTime.getHour() + 4;
+				int days = worldTime.getDay();
+				if (hours >= 24) { days += hours / 24; hours = hours % 24; }
+				return new LocalTime(days, hours, worldTime.getMinute());
+			}
+			@Override
+			public Time toWorld(LocalTime local) {
+				int hours = local.getHours() - 4;
+				int days = local.getDays();
+				if (hours < 0) { hours += 24; days--; }
+				return new Time(days, hours, local.getMinutes());
+			}
+			@Override
+			public String describe() { return "Verdant Crossroads time (UTC+4)"; }
+		};
+		return new Realm("Verdant Crossroads",
+				"A sprawling trade route through ancient forests.", rule);
+	}
+
+	private static void saveOutcome(GameFacade facade, MiniAdventureContext context, PlayerProfile profile1, PlayerProfile profile2) {
+		Time worldTime = WorldClock.getInstance().getTime();
+		AdventureRecord record = new AdventureRecord(
+				context.getName(),
+				context.isVictory(),
+				context.getRealm().getName(),
+				worldTime);
+		facade.recordAdventure(profile1, record);
+		facade.recordAdventure(profile2, record);
+		System.out.println("Adventure recorded to both profiles.");
+	}
+
+	private static void launchTimedRaid(GameFacade facade, Scanner scanner,
+			PlayerProfile profile1, PlayerProfile profile2) {
+		Character p1 = profile1.getActiveCharacter();
+		Character p2 = profile2.getActiveCharacter();
+		Realm realm = buildTimedRaidRealm();
 
 		MiniAdventure raid = new MiniAdventure(new TimedRaidAdventureContext());
 		MiniAdventure adventure = facade.launchMiniAdventure(raid, p1, p2, realm);
 		adventure.run(scanner);
+
+		saveOutcome(facade, raid.getContext(), profile1, profile2);
 	}
 
-    private static void launchEscort(GameFacade facade, Scanner scanner) {
-        System.out.println("\n--- Character Creation ---");
+	private static void launchEscort(GameFacade facade, Scanner scanner,
+			PlayerProfile profile1, PlayerProfile profile2) {
+		Character p1 = profile1.getActiveCharacter();
+		Character p2 = profile2.getActiveCharacter();
+		Realm realm = buildEscortRealm();
 
-        System.out.print("Player 1 name: ");
-        String name1 = scanner.nextLine().trim();
-        System.out.println("Classes: (w)arrior, (m)age, (a)rcher, (r)ogue, m(o)nk");
-        System.out.print("Player 1 class: ");
-        char class1 = scanner.nextLine().trim().toLowerCase().charAt(0);
-        facade.createCharacter(name1, class1);
-        Character p1 = facade.getCharacters().get(facade.getCharacters().size() - 1);
-        System.out.println("Created: " + p1.getName() + " the " + p1.getClassType());
+		MiniAdventure escort = new MiniAdventure(new EscortAdventureContext());
+		MiniAdventure adventure = facade.launchMiniAdventure(escort, p1, p2, realm);
+		adventure.run(scanner);
 
-        System.out.print("\nPlayer 2 name: ");
-        String name2 = scanner.nextLine().trim();
-        System.out.println("Classes: (w)arrior, (m)age, (a)rcher, (r)ogue, m(o)nk");
-        System.out.print("Player 2 class: ");
-        char class2 = scanner.nextLine().trim().toLowerCase().charAt(0);
-        facade.createCharacter(name2, class2);
-        Character p2 = facade.getCharacters().get(facade.getCharacters().size() - 1);
-        System.out.println("Created: " + p2.getName() + " the " + p2.getClassType());
-
-        LocalTimeRule realmTimeRule = new LocalTimeRule() {
-            @Override
-            public LocalTime toLocal(Time worldTime) {
-                int hours = worldTime.getHour() + 4;
-                int days = worldTime.getDay();
-                if (hours >= 24) {
-                    days += hours / 24;
-                    hours = hours % 24;
-                }
-                return new LocalTime(days, hours, worldTime.getMinute());
-            }
-
-            @Override
-            public Time toWorld(LocalTime local) {
-                int hours = local.getHours() - 4;
-                int days = local.getDays();
-                if (hours < 0) {
-                    hours += 24;
-                    days--;
-                }
-                return new Time(days, hours, local.getMinutes());
-            }
-
-            @Override
-            public String describe() {
-                return "Shadowfell time (UTC+2)";
-            }
-        };
-
-        Realm realm = new Realm("Shadowfell Catacombs",
-                "Ancient underground tunnels haunted by restless spirits.", realmTimeRule);
-
-        MiniAdventure escort = new MiniAdventure(new EscortAdventureContext());
-        MiniAdventure adventure = facade.launchMiniAdventure(escort, p1, p2, realm);
-        adventure.run(scanner);
-    }
+		saveOutcome(facade, escort.getContext(), profile1, profile2);
+	}
 }

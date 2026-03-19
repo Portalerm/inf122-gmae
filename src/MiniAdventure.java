@@ -9,6 +9,10 @@ public class MiniAdventure {
         this.context = context;
     }
 
+    public MiniAdventureContext getContext() {
+        return context;
+    }
+    
     public void initialize(Character c1, Character c2, Realm realm) {
         context.setRealm(realm);
         context.setMap(Map.createDefaultMap());
