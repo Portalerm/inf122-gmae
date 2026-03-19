@@ -1,3 +1,4 @@
+
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -34,20 +35,27 @@ public class EscortAdventureContext extends MiniAdventureContext {
 
     @Override
     public void placeEnemies() {
-        getEnemies().add(EscortEnemyFactory.createSkeleton(3, 5));
-        getEnemies().add(EscortEnemyFactory.createSkeleton(5, 3));
-        getEnemies().add(EscortEnemyFactory.createOgre(7, 5));
+        getEnemies().add(EscortEnemyFactory.createSkeleton(5, 1));
+        getEnemies().add(EscortEnemyFactory.createSkeleton(2, 4));
+        getEnemies().add(EscortEnemyFactory.createOgre(1, 9));
+        getEnemies().add(EscortEnemyFactory.createOgre(3, 7));
+        getEnemies().add(EscortEnemyFactory.createDragonling(7, 4));
+        getEnemies().add(EscortEnemyFactory.createDragonling(9, 2));
+
+        getEnemies().add(EscortEnemyFactory.createSkeleton(7, 10));
+        getEnemies().add(EscortEnemyFactory.createDragonling(10, 9));
+        getEnemies().add(EscortEnemyFactory.createOgre(9, 10));
         getEnemies().add(EscortEnemyFactory.createOgre(3, 9));
-        getEnemies().add(EscortEnemyFactory.createDragonling(9, 5));
-        getEnemies().add(EscortEnemyFactory.createDragonling(10, 1));
 
         getEnemies().add(EscortEnemyFactory.createSpikeTrap(1, 6));
-        getEnemies().add(EscortEnemyFactory.createPoisonTrap(5, 6));
+        getEnemies().add(EscortEnemyFactory.createPoisonTrap(5, 10));
         getEnemies().add(EscortEnemyFactory.createSpikeTrap(9, 8));
 
-        getEnemies().add(EscortEnemyFactory.createLoot(2, 1));
-        getEnemies().add(EscortEnemyFactory.createLoot(3, 1));
-        getEnemies().add(EscortEnemyFactory.createLoot(4, 1));
+        getEnemies().add(EscortEnemyFactory.createLoot(3, 4));
+        getEnemies().add(EscortEnemyFactory.createLoot(3, 8));
+        getEnemies().add(EscortEnemyFactory.createLoot(7, 9));
+        getEnemies().add(EscortEnemyFactory.createLoot(7, 6));
+        getEnemies().add(EscortEnemyFactory.createLoot(10, 8));
     }
 
     @Override
@@ -121,68 +129,90 @@ public class EscortAdventureContext extends MiniAdventureContext {
                     def = 0;
                     Inventory playerInventory = escortPlayer.getCharacter().getInventory();
                     if (!playerInventory.isEmpty()) {
-                        System.out.println(pName + " has some items in their " + playerInventory);
+                        System.out.println(pName + " has some items in their inventory:");
+
+                        for (Item item : playerInventory.getItems()) {
+                            String itemName = item.getInfo().getName();
+                            int index = playerInventory.getItems().indexOf(item) + 1;
+                            System.out.print("  " + index + ") " + itemName
+                                    + " (" + item.getInfo().getRarity() + ") ");
+
+                            switch (LootTable.lootTableLookup(itemName)[1]) {
+                                case 1:
+                                    System.out.println("- Attack Boost");
+                                    break;
+                                case 2:
+                                    System.out.println("- Defense Boost");
+                                    break;
+                                case 3:
+                                    System.out.println("- Heal");
+                                    break;
+                                case 4:
+                                    System.out.println("- Escape Chance");
+                                    break;
+                            };
+                        }
+
                         System.out.println("Which item would you like to use? (0 for none)");
                         String choice = scanner.nextLine().trim();
+
                         try {
                             num = Integer.parseInt(choice);
                         } catch (NumberFormatException ignored) {
                         }
+
                         if (num == 0) {
                             System.out.println("No item used.");
-                        }
-                        else if (num <= playerInventory.getItems().size() && num > 0) {
-                            String itemName = playerInventory.findItemByIndex(num-1).getInfo().getName();
+                        } else if (num <= playerInventory.getItems().size() && num > 0) {
+                            String itemName = playerInventory.findItemByIndex(num - 1).getInfo().getName();
                             int row = LootTable.lootTableLookup(itemName)[0];
                             int col = LootTable.lootTableLookup(itemName)[1];
                             System.out.println(itemName + " used!");
-                            playerInventory.removeItemByIndex(num-1);
+                            playerInventory.removeItemByIndex(num - 1);
                             switch (col) {
                                 case 1:
-                                    System.out.println("Player " + player.getPlayerNumber() + " will deal " +
-                                            "(+" + row + ") more damage for this turn!");
+                                    System.out.println("Player " + player.getPlayerNumber() + " will deal "
+                                            + "(+" + row + ") more damage for this turn!");
                                     power = row;
                                     break;
                                 case 2:
-                                    System.out.println("Player " + player.getPlayerNumber() + " will take " +
-                                            "(-" + row + ") less damage for this turn!");
+                                    System.out.println("Player " + player.getPlayerNumber() + " will take "
+                                            + "(-" + row + ") less damage for this turn!");
                                     if (npcPresent) {
-                                        System.out.println("NPC " + npc.getName() + " will also take " +
-                                                "(-" + row + ") less damage for this turn!");
+                                        System.out.println("NPC " + npc.getName() + " will also take "
+                                                + "(-" + row + ") less damage for this turn!");
                                     }
                                     def = row;
                                     break;
                                 case 3:
-                                    System.out.println("Player " + player.getPlayerNumber() + " will heal for " +
-                                            "(+" + (2+row) + ")!");
+                                    System.out.println("Player " + player.getPlayerNumber() + " will heal for "
+                                            + "(+" + (2 + row) + ")!");
                                     player.setHp(Math.min(player.getHp() + (2 + row), player.getMaxHp()));
                                     if (npcPresent) {
-                                        System.out.println("NPC " + npc.getName() + " will also heal " +
-                                                "(+" + (2+row) + ")!");
-                                        npc.setHp(Math.min(npc.getHp()+(2+row), npc.getMaxHp()));
+                                        System.out.println("NPC " + npc.getName() + " will also heal "
+                                                + "(+" + (2 + row) + ")!");
+                                        npc.setHp(Math.min(npc.getHp() + (2 + row), npc.getMaxHp()));
                                     }
                                     break;
                                 case 4:
-                                    System.out.println("Player " + player.getPlayerNumber() + " has a (" +
-                                            (50+(10*row)) + "%) chance to escape!");
+                                    System.out.println("Player " + player.getPlayerNumber() + " has a ("
+                                            + (50 + (10 * row)) + "%) chance to escape!");
                                     System.out.println("And the fate decides...");
                                     Random random = new Random();
-                                    int fate = random.nextInt(100)+1;
-                                    if (50+(10*row) >= fate) {
+                                    int fate = random.nextInt(100) + 1;
+                                    if (50 + (10 * row) >= fate) {
                                         System.out.println("Escape success! " + enemy.getName() + " avoided!");
                                         escape = true;
                                         enemy.kill();
                                         break;
-                                    }
-                                    else {
+                                    } else {
                                         System.out.println("Escape failed! Battle continues!");
                                     }
                                     break;
                                 default:
                                     System.out.println("Invalid choice.");
                             }
-                        }
-                        else {
+                        } else {
                             System.out.println("Invalid choice.");
                         }
                     }
@@ -302,11 +332,5 @@ public class EscortAdventureContext extends MiniAdventureContext {
     @Override
     public String getName() {
         return "Escort Adventure Window";
-    }
-
-    @Override
-    public String getDescription() {
-        return "A co-op turn-based mission where 2 players traverse a dungeon filled "
-                + "monsters and traps while one player is personally escorting an NPC towards the exit.";
     }
 }

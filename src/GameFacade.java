@@ -6,6 +6,7 @@ public class GameFacade {
 	private CampaignService campaignService;
 	private QuestEventService questEventService;
 	private PlayerProfileService profileService;
+	private MiniAdventureManager miniAdventureManager;
 
 	public GameFacade(User user) {
 		this.user = user;
@@ -13,10 +14,24 @@ public class GameFacade {
 		this.campaignService = new CampaignService();
 		this.questEventService = new QuestEventService();
 		this.profileService = new PlayerProfileService();
+		this.miniAdventureManager = MiniAdventureManager.getInstance();
 	}
 
 	public GameFacade() {
 		this(new User());
+	}
+
+	public MiniAdventureManager getMiniAdventureManager() {
+		return miniAdventureManager;
+	}
+
+	public MiniAdventure launchAdventureByIndex(int adventureIndex, Character c1, Character c2, Realm realm) {
+		MiniAdventureDefinition def = miniAdventureManager.getAdventure(adventureIndex);
+		if (def == null) return null;
+
+		MiniAdventure adventure = new MiniAdventure(def.getContext());
+		adventure.initialize(c1, c2, realm);
+		return adventure;
 	}
 
 	public PlayerProfile findProfile(String name) {
@@ -111,8 +126,8 @@ public class GameFacade {
 		return user;
 	}
 
-	public MiniAdventure launchMiniAdventure(MiniAdventure adventure, Character p1, Character p2, Realm realm) {
-		adventure.initialize(p1, p2, realm);
+	public MiniAdventure launchMiniAdventure(MiniAdventure adventure, Character c1, Character c2, Realm realm) {
+		adventure.initialize(c1, c2, realm);
 		return adventure;
 	}
 }

@@ -73,9 +73,4 @@ public class MiniAdventure implements MiniAdventureModule {
     public boolean isVictory() {
         return context.isVictory();
     }
-
-    @Override
-    public String getName() {
-        return context.getName();
-    }
 }

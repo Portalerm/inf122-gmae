@@ -190,12 +190,6 @@ public class TimedRaidAdventureContext extends MiniAdventureContext {
         return "Timed Raid Window";
     }
 
-    @Override
-    public String getDescription() {
-        return "A co-op turn-based raid where 2 players navigate a dungeon, "
-                + "fight monsters, collect objectives, and escape before time runs out.";
-    }
-
     private void advanceTime(int minutes) {
         Time current = worldClock.getTime();
         int totalMinutes = current.getMinute() + minutes;

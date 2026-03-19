@@ -11,6 +11,4 @@ public interface MiniAdventureModule {
     boolean isComplete();
 
     boolean isVictory();
-
-    String getName(); 
 }

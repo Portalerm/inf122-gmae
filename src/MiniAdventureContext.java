@@ -17,13 +17,11 @@ public abstract class MiniAdventureContext {
     private Realm realm;
     private boolean complete;
     private boolean victory;
-    private StringBuilder log;
 
     public MiniAdventureContext() {
         this.enemies = new ArrayList<>();
         this.complete = false;
         this.victory = false;
-        this.log = new StringBuilder();
     }
 
     abstract void initializeLocal(Character c1, Character c2);
@@ -37,8 +35,6 @@ public abstract class MiniAdventureContext {
     abstract void displayVictoryMessage();
 
     abstract String getName();
-
-    abstract String getDescription();
 
     abstract void handleEnemyInteraction(Player player, Enemy enemy, Scanner scanner);
 
