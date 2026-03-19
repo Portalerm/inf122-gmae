@@ -5,21 +5,45 @@ public class GameFacade {
 	private WorldClock worldClock;
 	private CampaignService campaignService;
 	private QuestEventService questEventService;
+	private PlayerProfileService profileService;
 
 	public GameFacade(User user) {
 		this.user = user;
 		this.worldClock = WorldClock.getInstance();
 		this.campaignService = new CampaignService();
 		this.questEventService = new QuestEventService();
+		this.profileService = new PlayerProfileService();
 	}
 
 	public GameFacade() {
 		this(new User());
 	}
 
+	public PlayerProfile findProfile(String name) {
+		return profileService.findByName(name);
+	}
+
+	public PlayerProfile createProfile(String name) {
+		return profileService.createProfile(name);
+	}
+
+	public List<String> getAllProfileNames() {
+		return profileService.getAllProfileNames();
+	}
+
+	public void recordAdventure(PlayerProfile profile, AdventureRecord record) {
+		profileService.recordAdventure(profile, record);
+	}
+
 	public void createCharacter(String name, char classChoice) {
 		Character character = CharacterFactory.createCharacter(name, classChoice);
 		user.addCharacter(character);
+	}
+
+	public Character createCharacterForProfile(PlayerProfile profile, String name, char classChoice) {
+		Character character = CharacterFactory.createCharacter(name, classChoice);
+		profile.setActiveCharacter(character);
+		return character;
 	}
 
 	public Campaign createCampaign(String name, CampaignVisibility visibility) {
