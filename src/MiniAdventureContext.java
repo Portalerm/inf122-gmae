@@ -40,7 +40,7 @@ public abstract class MiniAdventureContext {
 
     abstract String getDescription();
 
-    abstract void handleEnemyInteraction(Player player, Enemy enemy);
+    abstract void handleEnemyInteraction(Player player, Enemy enemy, Scanner scanner);
 
     abstract boolean checkVictory(Player player);
 
@@ -58,6 +58,12 @@ public abstract class MiniAdventureContext {
 
     public List<Enemy> getEnemies() {
         return enemies;
+    }
+
+    public void reset() {
+        this.enemies.clear();
+        this.complete = false;
+        this.victory = false;
     }
 
     public Realm getRealm() {
@@ -106,7 +112,7 @@ public abstract class MiniAdventureContext {
                 System.out.println("Mission abandoned!");
                 return true;
             }
-            handleAction(player1, action);
+            handleAction(player1, action, scanner);
             if (checkVictory(player1)) {
                 return true;
             }
@@ -121,7 +127,7 @@ public abstract class MiniAdventureContext {
                 System.out.println("Mission abandoned!");
                 return true;
             }
-            handleAction(player2, action);
+            handleAction(player2, action, scanner);
             if (checkVictory(player2)) {
                 return true;
             }
@@ -152,7 +158,7 @@ public abstract class MiniAdventureContext {
         return null;
     }
 
-    void handleAction(Player player, String action) {
+    void handleAction(Player player, String action, Scanner scanner) {
         int newRow = player.getRow();
         int newCol = player.getCol();
 
@@ -192,7 +198,7 @@ public abstract class MiniAdventureContext {
 
         Enemy enemy = findEnemy(newRow, newCol);
         if (enemy != null && enemy.isAlive()) {
-            handleEnemyInteraction(player, enemy);
+            handleEnemyInteraction(player, enemy, scanner);
             if (!player.isAlive()) {
                 return;
             }

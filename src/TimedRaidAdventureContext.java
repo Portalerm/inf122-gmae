@@ -116,7 +116,7 @@ public class TimedRaidAdventureContext extends MiniAdventureContext {
     }
 
     @Override
-    public void handleEnemyInteraction(Player player, Enemy enemy) {
+    public void handleEnemyInteraction(Player player, Enemy enemy, Scanner scanner) {
         RaidPlayer raidPlayer = (RaidPlayer) player;
         String pName = "P" + raidPlayer.getPlayerNumber();
         switch (enemy.getSymbol()) {

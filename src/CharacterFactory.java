@@ -1,4 +1,9 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class CharacterFactory {
+	public static List<String> acceptableClasses = Arrays.asList("w", "m", "a", "r", "o");
+
 	public static Character createCharacter(String name, char classChoice) {
 		String classType = "";
 		switch (classChoice) {

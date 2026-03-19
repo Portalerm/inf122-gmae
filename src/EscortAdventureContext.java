@@ -1,5 +1,3 @@
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -107,7 +105,7 @@ public class EscortAdventureContext extends MiniAdventureContext {
     }
 
     @Override
-    public void handleEnemyInteraction(Player player, Enemy enemy) {
+    public void handleEnemyInteraction(Player player, Enemy enemy, Scanner scanner) {
         EscortPlayer escortPlayer = (EscortPlayer) player;
         String pName = "P" + escortPlayer.getPlayerNumber();
         boolean npcPresent = escortPlayer.isEscortingNPC();
@@ -125,7 +123,6 @@ public class EscortAdventureContext extends MiniAdventureContext {
                     if (!playerInventory.isEmpty()) {
                         System.out.println(pName + " has some items in their " + playerInventory);
                         System.out.println("Which item would you like to use? (0 for none)");
-                        Scanner scanner = new Scanner(System.in);
                         String choice = scanner.nextLine().trim();
                         try {
                             num = Integer.parseInt(choice);
@@ -190,17 +187,19 @@ public class EscortAdventureContext extends MiniAdventureContext {
                         }
                     }
                     if (!escape) {
-                        enemy.takeDamage((escortPlayer.getAttackPower() + power));
+                        int playerDamage = escortPlayer.getAttackPower() + power;
+                        int enemyDamage = enemy.getAttackPower() - def;
+                        enemy.takeDamage(playerDamage);
                         System.out.println("  " + pName + " attacks for " + (escortPlayer.getAttackPower() + power)
                                 + " damage! (" + enemy.getName() + " HP: " + enemy.getHp() + ")");
                         if (enemy.isAlive()) {
-                            escortPlayer.takeDamage((enemy.getAttackPower() - def));
+                            escortPlayer.takeDamage(enemyDamage);
                             System.out.println("  " + enemy.getName() + " strikes back for "
-                                    + (enemy.getAttackPower()-def) + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
+                                    + enemyDamage + " damage! (" + pName + " HP: " + escortPlayer.getHp() + ")");
                             if (npcPresent) {
-                                npc.takeDamage((enemy.getAttackPower() - def));
+                                npc.takeDamage(enemyDamage);
                                 System.out.println("  " + enemy.getName() + " also strikes the NPC for "
-                                        + (enemy.getAttackPower()-def) + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
+                                        + enemyDamage + " damage! (" + npc.getName() + " HP: " + npc.getHp() + ")");
                             }
                         }
                     }

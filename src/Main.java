@@ -82,7 +82,17 @@ public class Main {
 	private static void createCharacterForProfile(GameFacade facade, Scanner scanner, PlayerProfile profile) {
 		System.out.println("Classes: (w)arrior, (m)age, (a)rcher, (r)ogue, m(o)nk");
 		System.out.print("Choose a class: ");
-		char classChoice = scanner.nextLine().trim().toLowerCase().charAt(0);
+
+		String input = scanner.nextLine().trim().toLowerCase();
+		if (input == null || input.isBlank()) {
+			System.out.println("No class selected. Defaulting to warrior.");
+			input = "w";
+		} else if (!CharacterFactory.acceptableClasses.contains(input.trim().toLowerCase())) {
+			System.out.println("Invalid class choice. Defaulting to warrior.");
+			input = "w";
+		}
+
+		char classChoice = input.charAt(0);
 		facade.createCharacterForProfile(profile, profile.getName(), classChoice);
 		Character c = profile.getActiveCharacter();
 		System.out.println("Created: " + c.getName() + " the " + c.getClassType());
