@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Campaign extends Identifiable {
@@ -57,7 +58,7 @@ public class Campaign extends Identifiable {
 	}
 
 	public List<QuestEvent> getQuestEvents() {
-		return questEvents;
+		return Collections.unmodifiableList(questEvents);
 	}
 
 	public void setQuestEvents(List<QuestEvent> questEvents) {
@@ -97,7 +98,7 @@ public class Campaign extends Identifiable {
 	}
 
 	public List<CampaignShare> getShared() {
-		return shared;
+		return Collections.unmodifiableList(shared);
 	}
 
 	public void share(User sharedWith, User sender, PermissionLevel permissionLevel) {

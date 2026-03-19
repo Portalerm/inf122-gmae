@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Character extends Identifiable {
@@ -49,7 +50,7 @@ public class Character extends Identifiable {
 	}
 
 	public List<EventParticipation> getParticipatingEvents() {
-		return participatingEvents;
+		return Collections.unmodifiableList(participatingEvents);
 	}
 
 	public void addParticipation(EventParticipation participation) {

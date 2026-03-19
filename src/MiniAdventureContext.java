@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,7 +54,7 @@ public abstract class MiniAdventureContext {
     }
 
     public List<Enemy> getEnemies() {
-        return enemies;
+        return Collections.unmodifiableList(enemies);
     }
 
     public void reset() {

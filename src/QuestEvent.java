@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class QuestEvent extends Identifiable {
@@ -73,7 +74,7 @@ public class QuestEvent extends Identifiable {
 	}
 
 	public List<QuestEventShare> getShared() {
-		return shared;
+		return Collections.unmodifiableList(shared);
 	}
 
 	public void setShared(List<QuestEventShare> shared) {
