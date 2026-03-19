@@ -1,4 +1,3 @@
-
 public class EscortPlayer extends Player {
 
     private boolean escortingNPC;

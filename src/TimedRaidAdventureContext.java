@@ -1,4 +1,3 @@
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,19 +37,19 @@ public class TimedRaidAdventureContext extends MiniAdventureContext {
 
     @Override
     public void placeEnemies() {
-        getEnemies().add(RaidEnemyFactory.createSkeleton(3, 5));
-        getEnemies().add(RaidEnemyFactory.createSkeleton(5, 3));
-        getEnemies().add(RaidEnemyFactory.createOgre(7, 5));
-        getEnemies().add(RaidEnemyFactory.createOgre(3, 9));
-        getEnemies().add(RaidEnemyFactory.createDragonling(9, 5));
+        addEnemy(RaidEnemyFactory.createSkeleton(3, 5));
+        addEnemy(RaidEnemyFactory.createSkeleton(5, 3));
+        addEnemy(RaidEnemyFactory.createOgre(7, 5));
+        addEnemy(RaidEnemyFactory.createOgre(3, 9));
+        addEnemy(RaidEnemyFactory.createDragonling(9, 5));
 
-        getEnemies().add(RaidEnemyFactory.createSpikeTrap(1, 6));
-        getEnemies().add(RaidEnemyFactory.createPoisonTrap(5, 6));
-        getEnemies().add(RaidEnemyFactory.createSpikeTrap(9, 8));
+        addEnemy(RaidEnemyFactory.createSpikeTrap(1, 6));
+        addEnemy(RaidEnemyFactory.createPoisonTrap(5, 6));
+        addEnemy(RaidEnemyFactory.createSpikeTrap(9, 8));
 
-        getEnemies().add(RaidEnemyFactory.createObjective(1, 10, "Ancient Relic"));
-        getEnemies().add(RaidEnemyFactory.createObjective(7, 3, "Sacred Tome"));
-        getEnemies().add(RaidEnemyFactory.createObjective(9, 1, "Crystal Shard"));
+        addEnemy(RaidEnemyFactory.createObjective(1, 10, "Ancient Relic"));
+        addEnemy(RaidEnemyFactory.createObjective(7, 3, "Sacred Tome"));
+        addEnemy(RaidEnemyFactory.createObjective(9, 1, "Crystal Shard"));
 
         totalObjectives = 3;
     }

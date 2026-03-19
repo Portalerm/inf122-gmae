@@ -1,3 +1,1 @@
-public class MapIdentity extends Identifiable {
-
-}
+public class MapIdentity extends Identifiable {}

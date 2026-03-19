@@ -1,4 +1,3 @@
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -100,7 +99,7 @@ public class Main {
         String name = scanner.nextLine().trim();
 
         PlayerProfile profile = facade.findProfile(name);
-        if (profile != null) {
+        if (!profile.isNullProfile()) {
             System.out.println("Welcome back, " + profile.getName() + "!");
             Character active = profile.getActiveCharacter();
             if (active != null) {

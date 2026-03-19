@@ -1,4 +1,3 @@
-
 public class Player extends Entity {
 
     private Character character;

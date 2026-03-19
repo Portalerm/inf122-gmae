@@ -1,4 +1,3 @@
-
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -35,27 +34,27 @@ public class EscortAdventureContext extends MiniAdventureContext {
 
     @Override
     public void placeEnemies() {
-        getEnemies().add(EscortEnemyFactory.createSkeleton(5, 1));
-        getEnemies().add(EscortEnemyFactory.createSkeleton(2, 4));
-        getEnemies().add(EscortEnemyFactory.createOgre(1, 9));
-        getEnemies().add(EscortEnemyFactory.createOgre(3, 7));
-        getEnemies().add(EscortEnemyFactory.createDragonling(7, 4));
-        getEnemies().add(EscortEnemyFactory.createDragonling(9, 2));
+        addEnemy(EscortEnemyFactory.createSkeleton(5, 1));
+        addEnemy(EscortEnemyFactory.createSkeleton(2, 4));
+        addEnemy(EscortEnemyFactory.createOgre(1, 9));
+        addEnemy(EscortEnemyFactory.createOgre(3, 7));
+        addEnemy(EscortEnemyFactory.createDragonling(7, 4));
+        addEnemy(EscortEnemyFactory.createDragonling(9, 2));
 
-        getEnemies().add(EscortEnemyFactory.createSkeleton(7, 10));
-        getEnemies().add(EscortEnemyFactory.createDragonling(10, 9));
-        getEnemies().add(EscortEnemyFactory.createOgre(9, 10));
-        getEnemies().add(EscortEnemyFactory.createOgre(3, 9));
+        addEnemy(EscortEnemyFactory.createSkeleton(7, 10));
+        addEnemy(EscortEnemyFactory.createDragonling(10, 9));
+        addEnemy(EscortEnemyFactory.createOgre(9, 10));
+        addEnemy(EscortEnemyFactory.createOgre(3, 9));
 
-        getEnemies().add(EscortEnemyFactory.createSpikeTrap(1, 6));
-        getEnemies().add(EscortEnemyFactory.createPoisonTrap(5, 10));
-        getEnemies().add(EscortEnemyFactory.createSpikeTrap(9, 8));
+        addEnemy(EscortEnemyFactory.createSpikeTrap(1, 6));
+        addEnemy(EscortEnemyFactory.createPoisonTrap(5, 10));
+        addEnemy(EscortEnemyFactory.createSpikeTrap(9, 8));
 
-        getEnemies().add(EscortEnemyFactory.createLoot(3, 4));
-        getEnemies().add(EscortEnemyFactory.createLoot(3, 8));
-        getEnemies().add(EscortEnemyFactory.createLoot(7, 9));
-        getEnemies().add(EscortEnemyFactory.createLoot(7, 6));
-        getEnemies().add(EscortEnemyFactory.createLoot(10, 8));
+        addEnemy(EscortEnemyFactory.createLoot(3, 4));
+        addEnemy(EscortEnemyFactory.createLoot(3, 8));
+        addEnemy(EscortEnemyFactory.createLoot(7, 9));
+        addEnemy(EscortEnemyFactory.createLoot(7, 6));
+        addEnemy(EscortEnemyFactory.createLoot(10, 8));
     }
 
     @Override

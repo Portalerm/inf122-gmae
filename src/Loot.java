@@ -1,4 +1,3 @@
-
 public class Loot extends Enemy {
 
     public Loot(char symbol, int row, int col) {

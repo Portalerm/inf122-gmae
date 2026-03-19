@@ -23,10 +23,13 @@ public class PlayerProfile {
         return user.getName();
     }
 
+    public boolean isNullProfile() {
+        return false;
+    }
+
     public User getUser() {
         return user;
     }
-
 
     public Character getActiveCharacter() {
         List<Character> chars = user.getCharacters();

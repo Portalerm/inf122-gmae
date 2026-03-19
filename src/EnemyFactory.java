@@ -1,4 +1,3 @@
-
 public class EnemyFactory {
 
     public static Enemy createSkeleton(int row, int col) {

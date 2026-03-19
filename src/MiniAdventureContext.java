@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +54,12 @@ public abstract class MiniAdventureContext {
 
     public List<Enemy> getEnemies() {
         return Collections.unmodifiableList(enemies);
+    }
+
+    protected void addEnemy(Enemy enemy) {
+        if (enemy != null) {
+            enemies.add(enemy);
+        }
     }
 
     public void reset() {

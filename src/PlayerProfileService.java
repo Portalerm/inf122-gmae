@@ -88,7 +88,7 @@ public class PlayerProfileService {
                 return profile;
             }
         }
-        return null;
+        return NullPlayerProfile.getInstance();
     }
 
     public PlayerProfile createProfile(String name) {
@@ -107,6 +107,7 @@ public class PlayerProfileService {
     }
 
     public void recordAdventure(PlayerProfile profile, AdventureRecord record) {
+        if (profile.isNullProfile()) return;
         profile.addAdventureRecord(record);
         saveProfiles();
     }
